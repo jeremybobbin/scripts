@@ -1,0 +1,15 @@
+#!/bin/bash
+
+context() {
+	echo $(xclip -o - -selection "$1" -verbose |&   head -n 4 |  tr -d '\n' |  sed -E 's/.*Type is ([^\.]+).*/\1/g')
+}
+
+p_context=$(context p)
+c_context=$(context c)
+
+echo $p_context
+echo $c_context
+
+c=$(xclip -o - -selection c)
+xclip -o - -selection p | xclip -selection c -t "$p_context"
+echo $c | xclip -selection p -t "$c_context"

@@ -1,0 +1,18 @@
+#!/bin/bash
+
+btc_commands='power on\nscan on\ndevices'
+
+device_name="AirPods"
+
+device_regex="^.*$device_name.*$"
+mac_regex='([[:xdigit:]]{1,2}:){5}[[:xdigit:]]{1,2}'
+
+
+mac_address=$(
+	echo -e "$btc_commands" |
+	bluetoothctl |
+	grep -Eo "$device_regex" |
+	grep -Eo "$mac_regex"
+)
+
+echo -e "connect $mac_address" | bluetoothctl &

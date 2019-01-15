@@ -1,0 +1,71 @@
+#!/bin/bash
+
+cache_file="$HOME/.cache/joogle"
+
+script="$HOME/.surf/joogle.js"
+
+# Max queries to cache
+max_cache=1000
+
+case "$1" in 
+	'-c' | '--clear-cache')
+		rm "$cache_file"
+		echo "Cache cleared."
+		exit 0
+		;;
+	'-h' | '--help')
+		echo -e ' -c, --clear-cache\tClears the Joogle Cache'
+		echo -e ' -h, --help       \tDisplays this help menu'
+		echo
+		exit 0
+		;;
+esac
+
+
+if [ ! -f $cache_file ]
+then
+	touch "$cache_file"
+fi
+
+
+if [ ! -f $script ]
+then
+	>&2 echo "Joogle script is required."
+	exit 1
+fi
+
+# Reverse cat the cache file so that recently appended results
+# are displayed first in dmenu
+query=$(tac "$cache_file" | dmenu -l 10 -p "What to Google?")
+
+# Remove the last instance of the query from the cache
+sed -i "/^$query$/d" "$cache_file"
+
+# if the query is empty
+if [ -z "$query" ]
+then
+	exit 1
+fi
+
+cache_count=$(wc -l "$cache_file" | cut -d' ' -f1)
+
+# Remove the first line of the cache file if
+# the cache file exceeds the length
+if [ $cache_count -ge $max_cache ]
+then
+	sed -i '1d' "$cache_file"
+fi
+
+# Append the latest query to the cache file
+echo $query >> $cache_file
+
+if [[ $query == .* ]]
+then
+	url=${query:1}
+else
+	url="https://www.google.com/search?q=$query"	
+fi
+
+
+
+surf -SNr $script "$url"

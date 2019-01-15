@@ -1,0 +1,10 @@
+#!/bin/bash
+
+
+free_mem=$(free --mega | grep Mem | awk '{print ($3 / $2) * 100}')
+print_date=$(date '+%r    |    %B %d, %Y');
+
+cpu_temp=$(echo $(cat /sys/class/thermal/thermal_zone0/temp) | sed "s/000$/°C/g")
+
+gpu_temp=${temps[0]}
+echo -e "   |   $print_date   |   RAM: $free_mem%   "

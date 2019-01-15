@@ -1,0 +1,28 @@
+#!/bin/bash
+
+
+displays=$(xrandr --listactivemonitors | sed -En "s/ [0-9]: \+\*?([^ ]+).*/\1/p")
+
+# SELECT DISPLAY
+display=$(echo -e "$displays" | dmenu -p "Monitor to modify:")
+
+# SELECT ROTATION
+rotation=$(echo -e "normal\nleft\nright\ninverted" | dmenu -p "$display's rotation: ")
+
+# SELECT POSITIOI
+position=$(echo -e "left-of\nright-of\nabove\nbelow" | dmenu -p "Placing $display" )
+
+rel_monitor=$(echo -e "$displays" | dmenu -p "Placing $display $position")
+
+
+
+echo $display
+echo $rotation
+echo $position
+echo $rel_monitor
+
+# EXECUTE
+if [ -n "$display" -a  -n "$rotation" ] 
+then
+    xrandr --output "$display" --auto --rotation "$rotation" --$position $rel_monitor
+fi

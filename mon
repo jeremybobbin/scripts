@@ -1,0 +1,5 @@
+#!/bin/bash
+
+xrandr --addmode HDMI-A-0 1920x1080 --addmode DisplayPort-2 1920x1080
+
+xrandr --output HDMI-A-0 --mode 1920x1080 --primary --output DisplayPort-2 --mode 1920x1080 --rotation left --left-of HDMI-A-0
